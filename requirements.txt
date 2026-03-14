@@ -1,0 +1,5 @@
+# npm requirements for local development
+# Install with:
+# npm install --save-dev serve@14.2.6
+
+serve@14.2.6
