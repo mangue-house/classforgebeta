@@ -1,26 +1,38 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Class Forge - Beta 1.9 (Oracle)</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto:wght@300;400;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
+
 <body>
     <canvas id="confetti-canvas"></canvas>
-    <div class="torch-container torch-left"><div class="torch-flame"></div><div class="torch-handle"></div></div>
-    <div class="torch-container torch-right"><div class="torch-flame"></div><div class="torch-handle"></div></div>
+    <div class="torch-container torch-left">
+        <div class="torch-flame"></div>
+        <div class="torch-handle"></div>
+    </div>
+    <div class="torch-container torch-right">
+        <div class="torch-flame"></div>
+        <div class="torch-handle"></div>
+    </div>
 
     <div id="game-hud" class="hud-bar">
         <div class="stats-group">
             <div class="hp-container">
                 <span class="hud-label">HP</span>
-                <div class="hp-track"><div id="hp-bar" class="hp-fill"></div></div>
+                <div class="hp-track">
+                    <div id="hp-bar" class="hp-fill"></div>
+                </div>
                 <span id="hp-text" class="hud-value">100</span>
             </div>
             <div class="voucher-container">
@@ -50,9 +62,10 @@
                 <option value="Conhecimentos Gerais">Conhecimentos Gerais</option>
             </select>
 
-            <label class="field-label" for="fileInput">📂 Texto ou PDF</label>
+            <label class="field-label" for="classContent">📂 Texto ou PDF</label>
             <input type="file" id="fileInput" accept=".pdf, .txt">
-            <textarea id="classContent" placeholder="Cole texto aqui se preferir..."></textarea>
+            <textarea id="classContent"
+                placeholder="Cole texto aqui, envie um PDF, ou deixe em branco para usar a matéria selecionada..."></textarea>
 
             <label class="field-label" for="difficulty">⚔️ Dificuldade</label>
             <select id="difficulty">
@@ -61,16 +74,60 @@
                 <option value="7">Longo (7 Fases)</option>
             </select>
 
-            <label class="field-label" for="apiKey">🔑 API Key (Gemini)</label>
-            <input type="password" id="apiKey" placeholder="Cole sua chave aqui">
+            <div style="margin-top: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                <input type="checkbox" id="rigorousTest" style="width: 20px; height: 20px; cursor: pointer;">
+                <label for="rigorousTest" style="color: var(--text); font-family: var(--font-body); cursor: pointer;">🧠
+                    Teste Mais Rígido (IA Avançada)</label>
+            </div>
+
 
             <button type="button" class="btn-main" id="startAiBtn">GERAR JOGO (IA)</button>
             <button type="button" class="btn-main btn-sec" id="showReportsBtn">📊 RELATÓRIOS</button>
             <button type="button" class="btn-main btn-sec" id="startDemoBtn">MODO DEMO</button>
         </form>
 
-        <div id="loading" class="hidden loading-wrap"><div class="loader">⚙️</div><p class="loading-text">Calculando Fases...</p></div>
+        <div id="loading" class="hidden loading-wrap">
+            <div class="loader">⚙️</div>
+            <p id="loading-text" class="loading-text">Calculando Fases...</p>
+        </div>
         <div class="footer-note">Project Class Forge © 2024</div>
+        <footer>
+            <span>Desenvolvido pela <a href="https://manguehouse.com.br" target="_blank">Mangue House</a></span>
+            <svg width="398" height="251" viewBox="0 0 398 251" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="97.4297" y="75.1011" width="202.976" height="24.3572" fill="#F5F5F5" />
+                <rect x="97.5461" y="75.4354" width="202.895" height="109.251" fill="#F5F5F5" />
+                <rect x="108" y="124" width="182" height="89" fill="#F5F5F5" />
+                <rect x="100.99" y="211.158" width="48.9641" height="15.3013" transform="rotate(180 100.99 211.158)"
+                    fill="#F5F5F5" />
+                <rect width="48.9641" height="15.3013" transform="matrix(1 8.74228e-08 8.74228e-08 -1 296.844 211.158)"
+                    fill="#F5F5F5" />
+                <rect width="48.9641" height="15.3013" transform="matrix(1 8.74228e-08 8.74228e-08 -1 318.267 189.736)"
+                    fill="#F5F5F5" />
+                <rect x="79.5654" y="189.736" width="48.9641" height="15.3013" transform="rotate(180 79.5654 189.736)"
+                    fill="#F5F5F5" />
+                <rect x="67.3228" y="195.857" width="55.0846" height="15.3013" transform="rotate(90 67.3228 195.857)"
+                    fill="#F5F5F5" />
+                <rect width="55.0846" height="15.3013" transform="matrix(-1.39071e-07 1 1 1.39071e-07 330.508 195.857)"
+                    fill="#F5F5F5" />
+                <rect width="55.0846" height="15.3013" transform="matrix(-1.39071e-07 1 1 1.39071e-07 351.927 174.435)"
+                    fill="#F5F5F5" />
+                <rect x="45.9058" y="174.435" width="55.0846" height="15.3013" transform="rotate(90 45.9058 174.435)"
+                    fill="#F5F5F5" />
+                <rect x="80.6381" y="104.049" width="235.41" height="53.325" fill="#F5F5F5" />
+                <rect x="144" y="29" width="12" height="59" fill="#F5F5F5" />
+                <rect x="133.963" width="32.4762" height="32.4762" fill="#F5F5F5" />
+                <rect x="242" y="29" width="12" height="72" fill="#F5F5F5" />
+                <rect x="231.394" width="32.4762" height="32.4762" fill="#F5F5F5" />
+                <rect x="40.5963" y="73.0713" width="36.5357" height="24.3572" fill="#F5F5F5" />
+                <rect x="30.4464" y="101.489" width="36.5357" height="24.3572" fill="#F5F5F5" />
+                <rect x="10.1499" y="52.7739" width="36.5357" height="24.3572" fill="#F5F5F5" />
+                <rect y="81.1909" width="36.5357" height="24.3572" fill="#F5F5F5" />
+                <rect width="36.5357" height="24.3572" transform="matrix(-1 0 0 1 357.238 71.0422)" fill="#F5F5F5" />
+                <rect width="36.5357" height="24.3572" transform="matrix(-1 0 0 1 367.387 99.4584)" fill="#F5F5F5" />
+                <rect width="36.5357" height="24.3572" transform="matrix(-1 0 0 1 387.684 50.7437)" fill="#F5F5F5" />
+                <rect width="36.5357" height="24.3572" transform="matrix(-1 0 0 1 397.834 79.1614)" fill="#F5F5F5" />
+            </svg>
+        </footer>
     </div>
 
     <div id="dashboard" class="dashboard-overlay">
@@ -79,17 +136,26 @@
             <button type="button" id="closeDashboardBtn" class="dash-back-btn">VOLTAR AO JOGO</button>
         </div>
         <div class="dash-content">
-            <button type="button" class="btn-main dash-print-btn" id="downloadPdfBtn">🖨️ BAIXAR PROVA E GABARITO (PDF)</button>
+            <button type="button" class="btn-main dash-print-btn" id="downloadPdfBtn">🖨️ BAIXAR PROVA E GABARITO
+                (PDF)</button>
             <button type="button" class="btn-sec reset-btn" id="restartBtn">🔄 REINICIAR</button>
             <h3 class="stats-title">Estatísticas</h3>
             <div class="stat-grid">
-                <div class="stat-card"><div class="stat-num">85%</div><div class="stat-label">Precisão</div></div>
-                <div class="stat-card"><div class="stat-num grade-good">120</div><div class="stat-label">XP Total</div></div>
+                <div class="stat-card">
+                    <div class="stat-num">85%</div>
+                    <div class="stat-label">Precisão</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-num grade-good">120</div>
+                    <div class="stat-label">XP Total</div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="game-area"><div id="map-container" class="map-flex"></div></div>
+    <div id="game-area">
+        <div id="map-container" class="map-flex"></div>
+    </div>
 
     <div id="battle-modal" class="battle-overlay">
         <div class="battle-window">
@@ -104,6 +170,8 @@
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
     </script>
-    <script src="app.js"></script>
+    <script src="config.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
+
 </html>

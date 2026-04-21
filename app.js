@@ -1,10 +1,14 @@
+import { callGeminiAPI } from './js/api.js';
+
 "use strict";
 
 const App = (() => {
   const OMEGA_CODE = ["r", "u", "g", "a", "l"];
   const PDF_READING_MESSAGE = "⏳ Lendo PDF...";
-  const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
-  const MAX_PDF_PAGES = 5;
+  // Chave Gemini e configurações carregadas de config.js
+  const GEMINI_API_KEY = window.ClassForgeConfig?.GEMINI_API_KEY;
+  const GEMINI_MODEL = window.ClassForgeConfig?.GEMINI_MODEL || "gemini-flash-latest";
+  const MAX_PDF_PAGES = window.ClassForgeConfig?.GAME?.MAX_PDF_PAGES || 30;
 
   const state = {
     playerHP: 100,
@@ -14,7 +18,8 @@ const App = (() => {
     hintVouchers: 0,
     secretKeyIndex: 0,
     musicInterval: null,
-    confetti: []
+    confetti: [],
+    pdfContent: ""
   };
 
   const refs = {
@@ -29,6 +34,7 @@ const App = (() => {
     configScreen: document.getElementById("config-screen"),
     configBox: document.getElementById("configBox"),
     loading: document.getElementById("loading"),
+    loadingText: document.getElementById("loading-text"),
     dashboard: document.getElementById("dashboard"),
     battleModal: document.getElementById("battle-modal"),
     battleBody: document.getElementById("battle-body"),
@@ -37,7 +43,6 @@ const App = (() => {
     fileInput: document.getElementById("fileInput"),
     classContent: document.getElementById("classContent"),
     difficulty: document.getElementById("difficulty"),
-    apiKey: document.getElementById("apiKey"),
     openDashboardBtn: document.getElementById("openDashboardBtn"),
     showReportsBtn: document.getElementById("showReportsBtn"),
     closeDashboardBtn: document.getElementById("closeDashboardBtn"),
@@ -399,8 +404,9 @@ const App = (() => {
       return;
     }
 
-    refs.classContent.value = PDF_READING_MESSAGE;
-    refs.classContent.value = await readPDF(file);
+    refs.classContent.placeholder = PDF_READING_MESSAGE;
+    state.pdfContent = await readPDF(file);
+    refs.classContent.placeholder = "✅ PDF carregado em background! O texto do PDF será enviado à IA.\n\nUse esta área de texto apenas se quiser adicionar contexto extra, observações ou regras específicas para o professor...";
   }
 
   async function readPDF(file) {
@@ -422,14 +428,7 @@ const App = (() => {
     }
   }
 
-  function cleanJSON(text) {
-    const firstBracket = text.indexOf("[");
-    const lastBracket = text.lastIndexOf("]");
-    if (firstBracket === -1 || lastBracket === -1) {
-      throw new Error("A IA não retornou uma lista válida.");
-    }
-    return text.slice(firstBracket, lastBracket + 1);
-  }
+  // API logic moved to js/api.js
 
   function calcHintVouchersByDifficulty(totalStages) {
     if (totalStages === 3) {
@@ -444,61 +443,10 @@ const App = (() => {
     return 0;
   }
 
-  function getGenerationPrompt({ content, subject, totalStages }) {
-    const context = subject === ""
-      ? `Baseie-se ESTRITAMENTE neste texto: "${content.slice(0, 3000)}"`
-      : `Matéria: ${subject}. Texto apoio: "${content.slice(0, 2000)}"`;
-
-    const promptStyle = totalStages === 10
-      ? "MODO OMEGA (VESTIBULAR): Gere enunciados complexos, longos, estilo ENEM/FUVEST. Alto rigor acadêmico."
-      : "MODO ESCOLAR: Gere enunciados claros e educativos com bom rigor factual.";
-
-    return `ATUE COMO MESTRE DE RPG. ${context}
-  OBJETIVO: Gerar JSON com EXATAMENTE ${totalStages} objetos.
-  ${promptStyle}
-  REGRAS:
-  1. 'desc': Lore envolvente.
-  2. RIGOR FACTUAL: Verifique fatos e contas.
-  3. QUIZ: Forneça 4 OPÇÕES (A,B,C,D) e inclua campo 'hint' (dica).
-  4. STEALTH: 'question' (Pergunta Aberta), 'answer' (Resposta completa), 'keywords' (Array de 3 palavras chave obrigatórias), 'hint' (Dica).
-  5. MAGIC: V ou F. Inclua campo 'hint'.
-  6. BALANCEAMENTO: 'magic' deve ser difícil (pegadinhas).
-
-  FORMATO: [{"title": "Inimigo", "type": "enemy", "desc": "...",
-  "quiz": {"question": "...", "options": ["A","B","C","D"], "correct": 1, "hint": "Dica..."},
-  "magic": {"statement": "...", "is_true": true, "hint": "Dica..."},
-  "stealth": {"question": "Defina...", "answer": "...", "keywords": ["x","y"], "hint": "Dica..."}},
-  {"title": "Boss", "type": "boss", "desc": "...", "quiz": {"question": "...", "options": [], "correct": "...", "hint": "..."}}]`;
-  }
-
-  function normalizeAdventureData(data, totalStages) {
-    const normalized = Array.isArray(data) ? data : [];
-
-    while (normalized.length < totalStages && normalized.length > 0) {
-      const clone = JSON.parse(JSON.stringify(normalized[normalized.length - 1]));
-      normalized.push(clone);
-    }
-
-    normalized.forEach((node, index) => {
-      if (index === normalized.length - 1) {
-        node.type = "boss";
-        if (typeof node.title === "string" && !node.title.toLowerCase().includes("boss")) {
-          node.title = `BOSS FINAL: ${node.title}`;
-        }
-      } else {
-        node.type = "enemy";
-      }
-
-      node.completed = Boolean(node.completed);
-    });
-
-    return normalized;
-  }
-
   async function initGame(useRealAI) {
     try {
-      const content = refs.classContent.value;
-      const apiKey = refs.apiKey.value.trim();
+      const textAreaContent = refs.classContent.value;
+      const content = state.pdfContent ? `${state.pdfContent}\n\n${textAreaContent}` : textAreaContent;
       const totalStages = Number.parseInt(refs.difficulty.value, 10);
       const subject = refs.subject.value;
 
@@ -507,41 +455,23 @@ const App = (() => {
         return;
       }
 
-      if (useRealAI && !apiKey) {
-        alert("⚠️ Falta API Key!");
-        return;
-      }
-
       state.hintVouchers = calcHintVouchersByDifficulty(totalStages);
       refs.voucherCount.innerText = String(state.hintVouchers);
       refs.configBox.classList.add("hidden");
       refs.loading.classList.remove("hidden");
+      if (refs.loadingText) refs.loadingText.innerText = "Gerando fases...";
 
       if (useRealAI) {
-        const prompt = getGenerationPrompt({ content, subject, totalStages });
-        const response = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{
-              parts: [{ text: prompt }]
-            }]
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error("Falha na chamada da API Gemini.");
-        }
-
-        const data = await response.json();
-        const generatedText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (!generatedText) {
-          throw new Error("Resposta da IA vazia ou inválida.");
-        }
-
-        const parsed = JSON.parse(cleanJSON(generatedText));
-        state.adventureData = normalizeAdventureData(parsed, totalStages);
-        if (!state.adventureData.length) {
+        const payload = {
+          subject: subject || "Matéria Livre",
+          content: content.slice(0, window.ClassForgeConfig?.GAME?.MAX_CONTENT_LENGTH || 100000),
+          totalStages: totalStages,
+          mode: totalStages === 10 ? "omega" : "normal",
+          isRigorous: document.getElementById('rigorousTest')?.checked || false
+        };
+        const adventure = await callGeminiAPI(payload);
+        state.adventureData = adventure;
+        if (!state.adventureData || !state.adventureData.length) {
           throw new Error("A IA não retornou fases utilizáveis.");
         }
       } else {
