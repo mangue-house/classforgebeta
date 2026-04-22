@@ -3,12 +3,13 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Class Forge - Beta 1.9 (Oracle)</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Roboto:wght@300;400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Open+Sans:wght@300;400;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
@@ -43,91 +44,81 @@
     </div>
 
     <div id="config-screen" class="config-overlay visible-flex">
-        <h1 class="brand-title">CLASS FORGE</h1>
-        <div class="version-badge">BETA v1.9</div>
+        <div class="config-grid">
+            <aside class="config-hero" aria-hidden="false">
+                <div class="brand-block">
+                    <h1 class="brand-title">CLASS FORGE</h1>
+                    <div class="version-badge">BETA v1.9</div>
+                </div>
+                <p class="hero-sub">Transforme sua matéria em uma aventura interativa — gere provas, gabaritos e desafios personalizados a partir de PDF ou texto.</p>
 
-        <form class="config-box" id="configBox" novalidate>
-            <label class="field-label" for="subject">📜 Matéria</label>
-            <select id="subject">
-                <option value="">-- MODO LIVRE (Usa PDF abaixo) --</option>
-                <option value="História">História</option>
-                <option value="Matemática">Matemática</option>
-                <option value="Geografia">Geografia</option>
-                <option value="Ciências">Ciências</option>
-                <option value="Física">Física</option>
-                <option value="Química">Química</option>
-                <option value="Literatura">Literatura</option>
-                <option value="Inglês">Inglês</option>
-                <option value="Tecnologia">Tecnologia</option>
-                <option value="Conhecimentos Gerais">Conhecimentos Gerais</option>
-            </select>
+                <ul class="feature-list">
+                    <li>📂 Suporta PDF e texto</li>
+                    <li>⚙️ Controle de dificuldade</li>
+                    <li>🧠 Teste rigoroso (opcional)</li>
+                </ul>
 
-            <label class="field-label" for="classContent">📂 Texto ou PDF</label>
-            <input type="file" id="fileInput" accept=".pdf, .txt">
-            <textarea id="classContent"
-                placeholder="Cole texto aqui, envie um PDF, ou deixe em branco para usar a matéria selecionada..."></textarea>
+                <div class="hero-illustration" aria-hidden="true">⚔️📜</div>
+            </aside>
 
-            <label class="field-label" for="difficulty">⚔️ Dificuldade</label>
-            <select id="difficulty">
-                <option value="3">Rápido (3 Fases)</option>
-                <option value="5" selected>Normal (5 Fases)</option>
-                <option value="7">Longo (7 Fases)</option>
-            </select>
+            <form class="config-box" id="configBox" novalidate>
+                <div class="form-grid">
+                    <div class="form-row">
+                        <label class="field-label" for="subject">📜 Matéria</label>
+                        <select id="subject">
+                            <option value="">-- MODO LIVRE (Usa PDF abaixo) --</option>
+                            <option value="História">História</option>
+                            <option value="Matemática">Matemática</option>
+                            <option value="Geografia">Geografia</option>
+                            <option value="Ciências">Ciências</option>
+                            <option value="Física">Física</option>
+                            <option value="Química">Química</option>
+                            <option value="Literatura">Literatura</option>
+                            <option value="Inglês">Inglês</option>
+                            <option value="Tecnologia">Tecnologia</option>
+                            <option value="Conhecimentos Gerais">Conhecimentos Gerais</option>
+                        </select>
+                    </div>
 
-            <div style="margin-top: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                <input type="checkbox" id="rigorousTest" style="width: 20px; height: 20px; cursor: pointer;">
-                <label for="rigorousTest" style="color: var(--text); font-family: var(--font-body); cursor: pointer;">🧠
-                    Teste Mais Rígido (IA Avançada)</label>
-            </div>
+                    <div class="form-row file-row">
+                        <label class="field-label" for="fileInput">📂 Texto ou PDF</label>
+                        <div class="file-wrap">
+                            <input type="file" id="fileInput" accept=".pdf, .txt" class="file-input">
+                            <label for="fileInput" class="file-btn">Escolher arquivo</label>
+                            <span class="file-help">Nenhum arquivo selecionado</span>
+                        </div>
+                        <textarea id="classContent" placeholder="Cole texto aqui, envie um PDF, ou deixe em branco para usar a matéria selecionada..."></textarea>
+                    </div>
 
+                    <div class="form-row">
+                        <label class="field-label" for="difficulty">⚔️ Dificuldade</label>
+                        <select id="difficulty">
+                            <option value="3">Rápido (3 Fases)</option>
+                            <option value="5" selected>Normal (5 Fases)</option>
+                            <option value="7">Longo (7 Fases)</option>
+                        </select>
+                    </div>
 
-            <button type="button" class="btn-main" id="startAiBtn">GERAR JOGO (IA)</button>
-            <button type="button" class="btn-main btn-sec" id="showReportsBtn">📊 RELATÓRIOS</button>
-            <button type="button" class="btn-main btn-sec" id="startDemoBtn">MODO DEMO</button>
-        </form>
+                    <div class="form-row form-row-inline">
+                        <input type="checkbox" id="rigorousTest">
+                        <label for="rigorousTest">🧠 Teste Mais Rígido (IA Avançada)</label>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-main" id="startAiBtn">GERAR JOGO (IA)</button>
+                    <div class="action-row">
+                        <button type="button" class="btn-main btn-sec" id="showReportsBtn">📊 RELATÓRIOS</button>
+                        <button type="button" class="btn-main btn-sec" id="startDemoBtn">MODO DEMO</button>
+                    </div>
+                </div>
+            </form>
+        </div>
 
         <div id="loading" class="hidden loading-wrap">
             <div class="loader">⚙️</div>
             <p id="loading-text" class="loading-text">Calculando Fases...</p>
         </div>
-        <div class="footer-note">Project Class Forge © 2024</div>
-        <footer>
-            <span>Desenvolvido pela <a href="https://manguehouse.com" target="_blank">Mangue House</a></span>
-            <svg width="398" height="251" viewBox="0 0 398 251" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="97.4297" y="75.1011" width="202.976" height="24.3572" fill="#F5F5F5" />
-                <rect x="97.5461" y="75.4354" width="202.895" height="109.251" fill="#F5F5F5" />
-                <rect x="108" y="124" width="182" height="89" fill="#F5F5F5" />
-                <rect x="100.99" y="211.158" width="48.9641" height="15.3013" transform="rotate(180 100.99 211.158)"
-                    fill="#F5F5F5" />
-                <rect width="48.9641" height="15.3013" transform="matrix(1 8.74228e-08 8.74228e-08 -1 296.844 211.158)"
-                    fill="#F5F5F5" />
-                <rect width="48.9641" height="15.3013" transform="matrix(1 8.74228e-08 8.74228e-08 -1 318.267 189.736)"
-                    fill="#F5F5F5" />
-                <rect x="79.5654" y="189.736" width="48.9641" height="15.3013" transform="rotate(180 79.5654 189.736)"
-                    fill="#F5F5F5" />
-                <rect x="67.3228" y="195.857" width="55.0846" height="15.3013" transform="rotate(90 67.3228 195.857)"
-                    fill="#F5F5F5" />
-                <rect width="55.0846" height="15.3013" transform="matrix(-1.39071e-07 1 1 1.39071e-07 330.508 195.857)"
-                    fill="#F5F5F5" />
-                <rect width="55.0846" height="15.3013" transform="matrix(-1.39071e-07 1 1 1.39071e-07 351.927 174.435)"
-                    fill="#F5F5F5" />
-                <rect x="45.9058" y="174.435" width="55.0846" height="15.3013" transform="rotate(90 45.9058 174.435)"
-                    fill="#F5F5F5" />
-                <rect x="80.6381" y="104.049" width="235.41" height="53.325" fill="#F5F5F5" />
-                <rect x="144" y="29" width="12" height="59" fill="#F5F5F5" />
-                <rect x="133.963" width="32.4762" height="32.4762" fill="#F5F5F5" />
-                <rect x="242" y="29" width="12" height="72" fill="#F5F5F5" />
-                <rect x="231.394" width="32.4762" height="32.4762" fill="#F5F5F5" />
-                <rect x="40.5963" y="73.0713" width="36.5357" height="24.3572" fill="#F5F5F5" />
-                <rect x="30.4464" y="101.489" width="36.5357" height="24.3572" fill="#F5F5F5" />
-                <rect x="10.1499" y="52.7739" width="36.5357" height="24.3572" fill="#F5F5F5" />
-                <rect y="81.1909" width="36.5357" height="24.3572" fill="#F5F5F5" />
-                <rect width="36.5357" height="24.3572" transform="matrix(-1 0 0 1 357.238 71.0422)" fill="#F5F5F5" />
-                <rect width="36.5357" height="24.3572" transform="matrix(-1 0 0 1 367.387 99.4584)" fill="#F5F5F5" />
-                <rect width="36.5357" height="24.3572" transform="matrix(-1 0 0 1 387.684 50.7437)" fill="#F5F5F5" />
-                <rect width="36.5357" height="24.3572" transform="matrix(-1 0 0 1 397.834 79.1614)" fill="#F5F5F5" />
-            </svg>
-        </footer>
     </div>
 
     <div id="dashboard" class="dashboard-overlay">
@@ -166,6 +157,44 @@
             <div class="battle-body" id="battle-body"></div>
         </div>
     </div>
+
+            <footer style="position: fixed; bottom: 0; width:100%; height: 80px; display: flex; justify-content: center; align-items: center; z-index: 3000;">
+                        <svg width="398" height="251" viewBox="0 0 398 251" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="97.4297" y="75.1011" width="202.976" height="24.3572" fill="#F5F5F5" />
+                <rect x="97.5461" y="75.4354" width="202.895" height="109.251" fill="#F5F5F5" />
+                <rect x="108" y="124" width="182" height="89" fill="#F5F5F5" />
+                <rect x="100.99" y="211.158" width="48.9641" height="15.3013" transform="rotate(180 100.99 211.158)"
+                    fill="#F5F5F5" />
+                <rect width="48.9641" height="15.3013" transform="matrix(1 8.74228e-08 8.74228e-08 -1 296.844 211.158)"
+                    fill="#F5F5F5" />
+                <rect width="48.9641" height="15.3013" transform="matrix(1 8.74228e-08 8.74228e-08 -1 318.267 189.736)"
+                    fill="#F5F5F5" />
+                <rect x="79.5654" y="189.736" width="48.9641" height="15.3013" transform="rotate(180 79.5654 189.736)"
+                    fill="#F5F5F5" />
+                <rect x="67.3228" y="195.857" width="55.0846" height="15.3013" transform="rotate(90 67.3228 195.857)"
+                    fill="#F5F5F5" />
+                <rect width="55.0846" height="15.3013" transform="matrix(-1.39071e-07 1 1 1.39071e-07 330.508 195.857)"
+                    fill="#F5F5F5" />
+                <rect width="55.0846" height="15.3013" transform="matrix(-1.39071e-07 1 1 1.39071e-07 351.927 174.435)"
+                    fill="#F5F5F5" />
+                <rect x="45.9058" y="174.435" width="55.0846" height="15.3013" transform="rotate(90 45.9058 174.435)"
+                    fill="#F5F5F5" />
+                <rect x="80.6381" y="104.049" width="235.41" height="53.325" fill="#F5F5F5" />
+                <rect x="144" y="29" width="12" height="59" fill="#F5F5F5" />
+                <rect x="133.963" width="32.4762" height="32.4762" fill="#F5F5F5" />
+                <rect x="242" y="29" width="12" height="72" fill="#F5F5F5" />
+                <rect x="231.394" width="32.4762" height="32.4762" fill="#F5F5F5" />
+                <rect x="40.5963" y="73.0713" width="36.5357" height="24.3572" fill="#F5F5F5" />
+                <rect x="30.4464" y="101.489" width="36.5357" height="24.3572" fill="#F5F5F5" />
+                <rect x="10.1499" y="52.7739" width="36.5357" height="24.3572" fill="#F5F5F5" />
+                <rect y="81.1909" width="36.5357" height="24.3572" fill="#F5F5F5" />
+                <rect width="36.5357" height="24.3572" transform="matrix(-1 0 0 1 357.238 71.0422)" fill="#F5F5F5" />
+                <rect width="36.5357" height="24.3572" transform="matrix(-1 0 0 1 367.387 99.4584)" fill="#F5F5F5" />
+                <rect width="36.5357" height="24.3572" transform="matrix(-1 0 0 1 387.684 50.7437)" fill="#F5F5F5" />
+                <rect width="36.5357" height="24.3572" transform="matrix(-1 0 0 1 397.834 79.1614)" fill="#F5F5F5" />
+            </svg>
+            <span style="color: #f5f5f5;">Desenvolvido por <a href="https://manguehouse.com" target="_blank"><b>Mangue House</b></a></span>
+        </footer>
 
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";

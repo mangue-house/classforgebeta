@@ -400,13 +400,32 @@ const App = (() => {
 
   async function handleFileInputChange(event) {
     const file = event.target.files?.[0];
-    if (!file || file.type !== "application/pdf") {
+    const fileHelp = document.querySelector('.file-help');
+    if (!file) {
+      if (fileHelp) fileHelp.innerText = 'Nenhum arquivo selecionado';
       return;
     }
 
+    if (fileHelp) fileHelp.innerText = file.name;
+
+    // Handle PDF or plain text files
     refs.classContent.placeholder = PDF_READING_MESSAGE;
-    state.pdfContent = await readPDF(file);
-    refs.classContent.placeholder = "✅ PDF carregado em background! O texto do PDF será enviado à IA.\n\nUse esta área de texto apenas se quiser adicionar contexto extra, observações ou regras específicas para o professor...";
+    if (file.type === 'application/pdf') {
+      state.pdfContent = await readPDF(file);
+      refs.classContent.placeholder = "✅ PDF carregado em background! O texto do PDF será enviado à IA.\n\nUse esta área de texto apenas se quiser adicionar contexto extra, observações ou regras específicas para o professor...";
+    } else if (file.type.startsWith('text') || file.name.toLowerCase().endsWith('.txt')) {
+      try {
+        const text = await file.text();
+        state.pdfContent = text;
+        refs.classContent.placeholder = "✅ Texto carregado em background!\n\nEdite ou adicione contexto na área de texto abaixo.";
+      } catch (err) {
+        state.pdfContent = '';
+      }
+    } else {
+      // Unsupported file type: ignore but show name
+      state.pdfContent = '';
+      refs.classContent.placeholder = "Arquivo não suportado. Use PDF ou TXT.";
+    }
   }
 
   async function readPDF(file) {
@@ -493,17 +512,18 @@ const App = (() => {
   function startGameUI() {
     refs.configScreen.classList.add("hidden");
     refs.gameArea.style.display = "block";
-    refs.gameHud.style.display = "flex";
+    refs.gameHud.classList.add("active");
   }
 
   function renderMap() {
     refs.mapContainer.innerHTML = "";
+    const frag = document.createDocumentFragment();
 
     state.adventureData.forEach((node, index) => {
       if (index > 0) {
         const connector = document.createElement("div");
         connector.className = "connector";
-        refs.mapContainer.appendChild(connector);
+        frag.appendChild(connector);
       }
 
       const card = document.createElement("div");
@@ -523,8 +543,12 @@ const App = (() => {
         }
       });
 
-      refs.mapContainer.appendChild(card);
+      frag.appendChild(card);
     });
+
+    refs.mapContainer.appendChild(frag);
+    // ensure leftmost content is visible on small screens
+    if (refs.gameArea) refs.gameArea.scrollLeft = 0;
   }
 
   function openBattleSelector(index) {
